@@ -4,7 +4,12 @@
 	"service": "app",
 	"workspaceFolder": "/usr/src/app",
 	"features": {
-		"ghcr.io/devcontainers/features/docker-in-docker:2.12.2": {},
+		"ghcr.io/devcontainers/features/common-utils:2": {
+			"username": "dashy",
+			"userUid": "1000",
+			"userGid": "1000",
+			"upgradePackages": "true"
+		},
 		"ghcr.io/devcontainers/features/git:1": {}
 	},
 	"customizations": {
@@ -59,5 +64,6 @@
 				}
 			}
 		}
-	}
+	},
+	"remoteUser": "dashy"
 }
