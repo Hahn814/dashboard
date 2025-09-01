@@ -10,6 +10,7 @@ services:
     networks:
       - devnet
     environment:
+      DEVELOPMENT: "true"
       POSTGRES_USER: dashy
       POSTGRES_PASSWORD: password
       POSTGRES_DB: dashboard
