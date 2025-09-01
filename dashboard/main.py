@@ -9,16 +9,16 @@ import structlog
 LOGGER = structlog.get_logger()
 LOGGER = LOGGER.bind(module=__name__)
 
+client = DatabaseClient(Settings())
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.state.settings = Settings()
-    LOGGER.info("Settings initialized", settings=app.state.settings)
+    LOGGER.info("Settings attached to FastAPI", settings=app.state.settings)
 
-    client = DatabaseClient()
-    client.bootstrap(app.state.settings)
     app.state.db = client
-    LOGGER.debug("Database client initialized", client=client)
+    LOGGER.debug("Database client attached to FastAPI", client=client)
 
     yield
     await client.shutdown()

@@ -9,9 +9,21 @@ LOGGER = LOGGER.bind(module=__name__)
 
 
 class DatabaseClient:
-    def __init__(self, engine: typing.Optional[Engine] = None):
-        self._engine = engine or create_engine("sqlite://", echo=True)
+    def __init__(self, settings: Settings, engine: typing.Optional[Engine] = None):
+        self._engine = engine or create_engine(
+            settings.connection_string,
+            echo=True,
+        )
         self._logger = LOGGER.bind(db_engine=self._engine.name)
+        self.bootstrap(settings=settings)
+
+    def __repr__(self):
+        return (
+            f"DatabaseClient(engine={self._engine.name}, host={self._engine.url.host})"
+        )
+
+    def __str__(self):
+        return self.__repr__()
 
     @property
     def engine(self) -> Engine:
@@ -21,13 +33,8 @@ class DatabaseClient:
         self._logger.info("Applying database schema")
         dashboard.create_tables(self.engine, settings=settings)
 
-    def seed(self, settings: Settings):
-        self._logger.info("Seeding database")
-        dashboard.seed_data(self.engine, settings)
-
     def bootstrap(self, settings: Settings):
         self.apply_schema(settings)
-        self.seed(settings)
 
     async def shutdown(self):
         self._logger.info("Shutting down database")

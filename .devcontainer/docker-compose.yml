@@ -1,9 +1,36 @@
 services:
   app:
+    container_name: dashboard_app
     build:
       context: ./../
       dockerfile: ./.devcontainer/Dockerfile
     command: sleep infinity
     volumes:
       - "./../:/usr/src/app/"
-    
+    networks:
+      - devnet
+    environment:
+      POSTGRES_USER: dashy
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: dashboard
+      POSTGRES_HOST: db
+
+  db:
+    container_name: dashboard_db
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: dashy
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: dashboard
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - devnet
+
+volumes:
+  db_data:
+    name: dashboard_db_data
+
+networks:
+  devnet:
+    name: dashboard_devnet
