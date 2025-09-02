@@ -1,3 +1,4 @@
+from datetime import datetime
 import sys
 import os
 
@@ -27,6 +28,11 @@ def get_arg_parser():
         "--clear", action="store_true", help="Clear existing data before seeding"
     )
 
+    task_parser = subparsers.add_parser("task", help="Manage tasks")
+    task_parser.add_argument(
+        "--drop", action="store_true", default=False, help="Drop the task table"
+    )
+
     return parser
 
 
@@ -39,9 +45,21 @@ LOGGER.info(f"Parsed arguments: {args}")
 if args.command == "seed":
     print("Seeding the database...")
     tasks = [
-        Task(name="Sample Task #1", pk=1),
-        Task(name="Sample Task #2", pk=2),
-        Task(name="Sample Task #3", pk=3),
+        Task(
+            name="Sample Task #1",
+            pk=1,
+            description="This is a sample task.",
+        ),
+        Task(
+            name="Sample Task #2",
+            pk=2,
+            description="This is another sample task.",
+        ),
+        Task(
+            name="Sample Task #3",
+            pk=3,
+            description="This is yet another sample task.",
+        ),
     ]
 
     with Session(client.engine) as session:
@@ -59,3 +77,7 @@ if args.command == "seed":
             session.commit()
 
     LOGGER.info("Database seeded successfully.")
+elif args.command == "task":
+    with Session(client.engine) as session:
+        if args.drop:
+            Task.__table__.drop(client.engine)
